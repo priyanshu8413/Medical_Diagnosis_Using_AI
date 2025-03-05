@@ -111,14 +111,9 @@ elif st.session_state.page == "Prediction":
        </style>
         """
     st.markdown(page_bg_img, unsafe_allow_html=True)
-
-  
-
-# Get the absolute path of the current script
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-@st.cache_resource
-def load_models():
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    @st.cache_resource
+    def load_models():
     model_paths = {
         'diabetes': os.path.join(BASE_DIR, 'Model', 'diabetes_model.sav'),
         'heart_disease': os.path.join(BASE_DIR, 'Model', 'heart_disease_model.sav'),
@@ -137,9 +132,16 @@ def load_models():
 
     return models
 
-# Load models once
-models = load_models()
-    # Create a dropdown menu for disease prediction
+    def load_models():
+    model_paths = {
+        'diabetes': os.path.join(BASE_DIR, 'Model', 'diabetes_model.sav'),
+        'heart_disease': os.path.join(BASE_DIR, 'Model', 'heart_disease_model.sav'),
+        'parkinsons': os.path.join(BASE_DIR, 'Model', 'parkinsons_model.sav'),
+        'lung_cancer': os.path.join(BASE_DIR, 'Model', 'lungs_disease_model.sav'),
+        'thyroid': os.path.join(BASE_DIR, 'Model', 'Thyroid_model.sav')
+    }
+
+    models = load_models()
     selected = st.selectbox(
         'Select a Disease to Predict',
         ['Diabetes Prediction',
