@@ -112,7 +112,7 @@ elif st.session_state.page == "Prediction":
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
     # Load the saved models
-      @st.cache_resource
+    @st.cache_resource
     def load_models():
         models = {
             'diabetes': pickle.load(open('Model/diabetes_model.sav', 'rb')),
