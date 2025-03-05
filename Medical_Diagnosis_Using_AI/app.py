@@ -112,13 +112,20 @@ elif st.session_state.page == "Prediction":
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
     # Load the saved models
-    models = {
-        'diabetes': pickle.load(open('Model/diabetes_model.sav', 'rb')),
-        'heart_disease': pickle.load(open('Model/heart_disease_model.sav', 'rb')),
-        'parkinsons': pickle.load(open('Model/parkinsons_model.sav', 'rb')),
-        'lung_cancer': pickle.load(open('Model/lungs_disease_model.sav', 'rb')),
-        'thyroid': pickle.load(open('Model/Thyroid_model.sav', 'rb'))
-    }
+      @st.cache_resource
+    def load_models():
+        models = {
+            'diabetes': pickle.load(open('Model/diabetes_model.sav', 'rb')),
+            'heart_disease': pickle.load(open('Model/heart_disease_model.sav', 'rb')),
+            'parkinsons': pickle.load(open('Model/parkinsons_model.sav', 'rb')),
+            'lung_cancer': pickle.load(open('Model/lungs_disease_model.sav', 'rb')),
+            'thyroid': pickle.load(open('Model/Thyroid_model.sav', 'rb'))
+        }
+        return models
+
+
+    # Load models once
+    models = load_models()
 
     # Create a dropdown menu for disease prediction
     selected = st.selectbox(
