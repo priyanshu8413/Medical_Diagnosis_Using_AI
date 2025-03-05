@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 import pickle
+import os
 
 
 
@@ -111,7 +112,7 @@ elif st.session_state.page == "Prediction":
         """
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
-  import os
+  
 
 # Get the absolute path of the current script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
