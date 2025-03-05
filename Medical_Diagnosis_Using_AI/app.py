@@ -111,22 +111,33 @@ elif st.session_state.page == "Prediction":
         """
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
-    # Load the saved models
-    @st.cache_resource
-    def load_models():
-        models = {
-            'diabetes': pickle.load(open('Model/diabetes_model.sav', 'rb')),
-            'heart_disease': pickle.load(open('Model/heart_disease_model.sav', 'rb')),
-            'parkinsons': pickle.load(open('Model/parkinsons_model.sav', 'rb')),
-            'lung_cancer': pickle.load(open('Model/lungs_disease_model.sav', 'rb')),
-            'thyroid': pickle.load(open('Model/Thyroid_model.sav', 'rb'))
-        }
-        return models
+  import os
 
+# Get the absolute path of the current script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    # Load models once
-    models = load_models()
+@st.cache_resource
+def load_models():
+    model_paths = {
+        'diabetes': os.path.join(BASE_DIR, 'Model', 'diabetes_model.sav'),
+        'heart_disease': os.path.join(BASE_DIR, 'Model', 'heart_disease_model.sav'),
+        'parkinsons': os.path.join(BASE_DIR, 'Model', 'parkinsons_model.sav'),
+        'lung_cancer': os.path.join(BASE_DIR, 'Model', 'lungs_disease_model.sav'),
+        'thyroid': os.path.join(BASE_DIR, 'Model', 'Thyroid_model.sav')
+    }
 
+    models = {}
+    for key, path in model_paths.items():
+        if os.path.exists(path):  # Check if file exists
+            with open(path, 'rb') as file:
+                models[key] = pickle.load(file)
+        else:
+            st.error(f"Model file {path} not found!")
+
+    return models
+
+# Load models once
+models = load_models()
     # Create a dropdown menu for disease prediction
     selected = st.selectbox(
         'Select a Disease to Predict',
