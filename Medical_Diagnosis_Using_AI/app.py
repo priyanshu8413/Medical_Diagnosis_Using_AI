@@ -294,9 +294,9 @@ elif st.session_state.page == "Prediction":
         parkinsons_diagnosis = ''
         if st.button("Parkinson's Test Result"):
             # Load the model correctly
-            with open("Model/parkinsons_model.sav", "rb") as file:
-                model = pickle.load(file)  # Load directly into a variable
-
+            model_path = os.path.abspath("Model/parkinsons_model.sav")
+            with open(model_path, "rb") as file:
+                model = pickle.load(file)
             if isinstance(model, tuple):  # Fix if model was saved as a tuple
                 model = model[0]
 
