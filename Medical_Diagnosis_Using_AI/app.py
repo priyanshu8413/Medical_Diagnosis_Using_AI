@@ -294,7 +294,10 @@ elif st.session_state.page == "Prediction":
         parkinsons_diagnosis = ''
         if st.button("Parkinson's Test Result"):
             # Load the model correctly
-            model_path = os.path.abspath("Model/parkinsons_model.sav")
+            model_path = os.path.join(os.path.dirname(__file__), "Model", "parkinsons_model.sav")
+            if not os.path.exists(model_path):
+                raise FileNotFoundError(f"Model file not found at: {model_path}")
+
             with open(model_path, "rb") as file:
                 model = pickle.load(file)
             if isinstance(model, tuple):  # Fix if model was saved as a tuple
