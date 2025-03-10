@@ -1,11 +1,13 @@
 import streamlit as st
+import numpy as np
 import pickle
 import os
 
 
 
 # Change Name & Logo
-st.set_page_config(page_title="Disease Prediction", page_icon="⚕️")
+st.set_page_config(page_title="Disease Prediction", page_icon="⚕️",layout="wide")
+
 
 # Hiding Streamlit add-ons
 hide_st_style = """
@@ -94,7 +96,7 @@ elif st.session_state.page == "Prediction":
        div[data-testid="stMarkdownContainer"] p {{
             font-size: 20px !important;  /* Adjust font size for input labels */
             font-weight: bold !important;  /* Make labels bold */
-            color: red !important; /* Change color if needed */
+            color: yellow !important; /* Change color if needed */
         }}
        [data-testid="stAppViewContainer"] {{
        background-image: url({background_image_url});
@@ -103,6 +105,17 @@ elif st.session_state.page == "Prediction":
          background-repeat: no-repeat;
          background-attachment: fixed;
        }}
+          div.stButton > button {{
+               font-size: 30px !important;
+               font-weight: bold !important;
+              padding: 15px 30px !important;
+             background-color: green !important;
+               color: white !important;
+               border-radius: 10px !important;
+              border: none !important;
+               width: 60% !important;
+    }}
+       
         
 
       
@@ -120,7 +133,7 @@ elif st.session_state.page == "Prediction":
         model_paths = {
             'diabetes': os.path.join(BASE_DIR, 'Model', 'diabetes_model.sav'),
             'heart_disease': os.path.join(BASE_DIR, 'Model', 'heart_disease_model.sav'),
-            'parkinsons': os.path.join(BASE_DIR, 'Model', 'parkinsons_model.sav'),
+
             'lung_cancer': os.path.join(BASE_DIR, 'Model', 'lungs_disease_model.sav'),
             'thyroid': os.path.join(BASE_DIR, 'Model', 'Thyroid_model.sav')
         }
@@ -184,7 +197,23 @@ elif st.session_state.page == "Prediction":
             diab_prediction = models['diabetes'].predict(
                 [[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
             diab_diagnosis = 'The person is diabetic' if diab_prediction[0] == 1 else 'The person is not diabetic'
-            st.success(diab_diagnosis)
+            st.markdown(
+                f"""
+                                  <div style="
+                                      padding: 20px;
+                                      background-color: #E8F5E9;
+                                      color: #1B5E20;
+                                      border-radius: 10px;
+                                      text-align: center;
+                                      font-size: 80px;
+                                      font-weight: bold;
+                                      border: 2px solid #1B5E20;
+                                  ">
+                                     {diab_diagnosis} 
+                                  </div>
+                                  """,
+                unsafe_allow_html=True
+            )
 
     # Heart Disease Prediction Page
     if selected == 'Heart Disease Prediction':
@@ -216,7 +245,23 @@ elif st.session_state.page == "Prediction":
                 [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
             heart_diagnosis = 'The person has heart disease' if heart_prediction[
                                                                     0] == 1 else 'The person does not have heart disease'
-            st.success(heart_diagnosis)
+            st.markdown(
+                f"""
+                                              <div style="
+                                                  padding: 20px;
+                                                  background-color: #E8F5E9;
+                                                  color: #1B5E20;
+                                                  border-radius: 10px;
+                                                  text-align: center;
+                                                  font-size: 80px;
+                                                  font-weight: bold;
+                                                  border: 2px solid #1B5E20;
+                                              ">
+                                                 {heart_diagnosis} 
+                                              </div>
+                                              """,
+                unsafe_allow_html=True
+            )
 
     # Parkinson's Prediction Page
     if selected == "Parkinsons Prediction":
@@ -248,12 +293,50 @@ elif st.session_state.page == "Prediction":
 
         parkinsons_diagnosis = ''
         if st.button("Parkinson's Test Result"):
-            parkinsons_prediction = models['parkinsons'].predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ,
-                                                                   DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR,
-                                                                   HNR, RPDE, DFA, spread1, spread2, D2, PPE]])
-            parkinsons_diagnosis = "The person has Parkinson's disease" if parkinsons_prediction[
-                                                                               0] == 1 else "The person does not have Parkinson's disease"
-            st.success(parkinsons_diagnosis)
+            # Load the model correctly
+            with open("Model/parkinsons_model.sav", "rb") as file:
+                model = pickle.load(file)  # Load directly into a variable
+
+            if isinstance(model, tuple):  # Fix if model was saved as a tuple
+                model = model[0]
+
+            # Ensure input is a NumPy array with correct shape
+            input_data = np.array([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP,
+                                    Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR,
+                                    RPDE, DFA, spread1, spread2, D2, PPE]])
+
+            # Debugging: Check model type and input shape
+            print("Input shape:", input_data.shape)
+            print("Model type:", type(model))
+
+            # Ensure model has a predict method
+            if hasattr(model, "predict"):
+                prediction = model.predict(input_data)
+                parkinsons_diagnosis = (
+                    "The person has Parkinson's disease" if prediction[
+                                                                0] == 1 else "The person does not have Parkinson's disease"
+                )
+                st.markdown(
+                    f"""
+                                                              <div style="
+                                                                  padding: 20px;
+                                                                  background-color: #E8F5E9;
+                                                                  color: #1B5E20;
+                                                                  border-radius: 10px;
+                                                                  text-align: center;
+                                                                  font-size: 80px;
+                                                                  font-weight: bold;
+                                                                  border: 2px solid #1B5E20;
+                                                              ">
+                                                                 {parkinsons_diagnosis} 
+                                                              </div>
+                                                              """,
+                    unsafe_allow_html=True
+                )
+
+
+            else:
+                st.error("Error: Loaded model does not have a 'predict' method.")
 
     # Lung Cancer Prediction Page
     if selected == "Lung Cancer Prediction":
@@ -296,7 +379,23 @@ elif st.session_state.page == "Prediction":
                                                                SHORTNESS_OF_BREATH, SWALLOWING_DIFFICULTY, CHEST_PAIN]])
             lungs_diagnosis = "The person has lung cancer disease" if lungs_prediction[
                                                                           0] == 1 else "The person does not have lung cancer disease"
-            st.success(lungs_diagnosis)
+            st.markdown(
+                f"""
+                                                          <div style="
+                                                              padding: 20px;
+                                                              background-color: #E8F5E9;
+                                                              color: #1B5E20;
+                                                              border-radius: 10px;
+                                                              text-align: center;
+                                                              font-size: 80px;
+                                                              font-weight: bold;
+                                                              border: 2px solid #1B5E20;
+                                                          ">
+                                                             {lungs_diagnosis} 
+                                                          </div>
+                                                          """,
+                unsafe_allow_html=True
+            )
 
     # Hypo-Thyroid Prediction Page
     if selected == "Hypo-Thyroid Prediction":
@@ -318,5 +417,22 @@ elif st.session_state.page == "Prediction":
             thyroid_prediction = models['thyroid'].predict([[age, sex, on_thyroxine, tsh, t3_measured, t3, tt4]])
             thyroid_diagnosis = "The person has Hypo-Thyroid disease" if thyroid_prediction[
                                                                              0] == 1 else "The person does not have Hypo-Thyroid disease"
-            st.success(thyroid_diagnosis)
+            st.markdown(
+                f"""
+                                                          <div style="
+                                                              padding: 20px;
+                                                              background-color: #E8F5E9;
+                                                              color: #1B5E20;
+                                                              border-radius: 10px;
+                                                              text-align: center;
+                                                              font-size: 80px;
+                                                              font-weight: bold;
+                                                              border: 2px solid #1B5E20;
+                                                          ">
+                                                             {thyroid_diagnosis} 
+                                                          </div>
+                                                          """,
+                unsafe_allow_html=True
+            )
+
 
